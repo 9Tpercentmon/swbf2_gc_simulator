@@ -1,0 +1,254 @@
+﻿<html>
+<head>
+	<meta name="version" content="1.5"/>
+	<meta name="versionBuild" content="1.5"/> <!--Version without sub dots(.) 1.2.1 would be 1.21 -->
+	<title>Sim GC by 9Tpercentmon</title>
+
+<link rel="stylesheet" type="text/css" href="css/gc.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+</head>
+<body class="bg-dark text-white" style="margin:20;padding:0;font-size:18">
+<div id="alertVersion" style="color: red" class="text-danger"> </div>
+<br>
+<button id="repGCBtn" value="rep" onClick="initGC(this.value)" class="btn btn-light">Republic Campaign</button >
+<button id="cisGCBtn" value="cis" onClick="initGC(this.value)" class="btn btn-light">CIS Campaign</button >
+<button id="allGCBtn" value="all" onClick="initGC(this.value)" class="btn btn-light">Alliance Campaign</button >
+<button id="impGCBtn" value="imp" onClick="initGC(this.value)" class="btn btn-light">Empire Campaign</button >
+<h3 id="gcTitle">GC AI probability generator</h3>
+<br>You can add your fleet by clicking on empty stars/planets with left-click. Holding CTRL adds the enemy fleet instead.
+<br>Adding a fleet on a different faction planet switches the controlled team automatically.
+<br>Clicking on any fleet at any point deletes it. If you plan to move a fleet from one place to other, you must add it on the planet you want and delete from the previous (or vice-versa).
+<br><br>
+
+The probability updates automatically on every change in the map/options. You can also debug using the more accurate code by clicking on the buttom on the bottom and pasting the code at <a href='https://replit.com/languages/lua' target='_blank'> https://replit.com/languages/lua </a>.
+<br><br>
+<div class="parent">
+<div id="imgs">
+
+</div>
+
+<div class="leftChild" style="position:absolute;top: -15px;left: 700px;">Top 3 most recent fights (yep, the AI does use that to figure where to go lol)
+<table>
+	<tr>
+		<td>Last</td>
+		<td>2nd to last</td>
+		<td>3rd to last</td>
+	</tr>
+	<tr>	
+		<td><select id="recent1" onChange="printLua()" class="selectpicker" data-live-search="true" title="Must be the planet you attacked/defended most recently"><option value=""></option></select></td>
+		<td><select id="recent2"onChange="printLua()" class="selectpicker" data-live-search="true" title="Must be the previous planet you atacked/defended"><option value=""></option></select></td>
+		<td><select id="recent3"onChange="printLua()" class="selectpicker" data-live-search="true" title="Must be the planet you atacked/defended 2 fights ago"><option value=""></option></select></td>
+	</tr>
+</table>
+<input id='recentCb' type='checkbox' title="By doing so, every planet you attacked will be automatically added to this list\nIf you happen to defend a planet, please add manually (respecting the order)"/> Automatically changes the Recent Planets on clicking on the map.
+<br><br>In case they bought a fleet on their current turn (including by getting it exploded on the previous turn), select the planet where it is below.
+<br>If they already had the fleet on your turn, ignore it
+<br><select id="justBuilt" onChange="printLua()" title = "Use it just in case they have built a fleet on this current turn. Switch it back to empty for their next turn."></select>
+<br><br><b>Select the type of the probability generator:</b>
+<div class="groupRadio">
+	<input type="radio" id="simulation" name="typeRng" value="sim" onClick="printLua()"><label for="simulation">Simulation</label>
+	<input type="radio" id="math" name="typeRng" value="math" onClick="printLua()" checked><label for="math">Math</label>
+	<input type="radio" id="both" name="typeRng" value="both" onClick="printLua()"><label for="both">Both</label>
+</div>
+</div>
+</div>
+<!--
+<div id="curOptLabel"></div>
+<br>
+Mode selection:
+<button id="switchBtn" value="switch" onClick="optSelected(this.value)">Switch colors</button >
+<button id="adffBtn" value="addFFleet" onClick="optSelected(this.value)">Add Friendly Fleet</button >
+<button id="adefBtn" value="addEFleet" onClick="optSelected(this.value)">Add Enemy Fleet</button >
+<button id="resetBtn" value="reset" onClick="initGC('reset')">Reset current campaign</button >
+-->
+<b><div style="color: red" class="text-danger">
+Make sure the last 3 fights are set correctly.
+<br>Double check the map to see if there is any fleet that shouldn't be there.
+</div></b>
+<br>
+<b>AI Movements</b>
+<br><div id="fleetsIngame"></div>
+<div id="mapInfo"></div>
+<input type="hidden" id="curOpt" value="addFFleet"/>
+<br>
+<div id="error" style="color: red" class="text-danger"></div>
+
+<br><button id="cpyLua" value="copyLuaCode" onClick="copyLuaCode()"  class="btn btn-success" title="For debug purposes. If you see any wierd number, double check it via this method">Click here to copy the .lua code and debug anywhere else</button >
+
+<br><div id="copySucess" style="color: green"></div>
+<div id="codeSnippet" class="computerGreen">
+<pre><code id="luaCode">
+</code>
+</pre>
+</div>
+
+
+</body>
+
+
+
+<script src="js/imgs_tags.js"></script>
+<script src="js/lua_code.js"></script>
+<script src="js/general.js"></script>
+<script src="js/startPlanet.js"></script>
+<script src="js/moveCalc.js"></script>
+<script>
+	var REP = 1
+	var CIS = 2
+	var ALL = 1
+	var IMP = 2
+	var currentFaction = "imp" //default value
+	var countFleet = 0
+	var fleetName
+	var strokeName
+	var fleetNameCW = ["none","repFleet","cisFleet"]
+	var fleetNameGCW = ["none","allFleet","impFleet"]
+	var strokeNameCW = ["none","repStroke","cisStroke"]
+	var strokeNameGCW = ["none","allStroke","impStroke"]
+	var myTeam = REP //default value
+	var botTeam = CIS //default value
+	var planetTeamJS = {}
+	var planetFleetJS = {}
+	var recentPlanetsJS = {}
+	var colors = new Array()
+	colors[0] = "dot_black"
+	colors[myTeam] = "dot_blue"
+	colors[botTeam] = "dot_red"
+	colors[3] = "dot_black_yellow"
+	colors[myTeam+3] = "dot_blue_yellow"
+	colors[botTeam+3] = "dot_red_yellow"
+	var currentEra = "cw" //default value
+	var portPlanet = {}
+	var currentFactionVars = {}
+	var myVersion = document.head.querySelector("[name~=version][content]").content
+	var myVersionBuild = parseFloat(document.head.querySelector("[name~=versionBuild][content]").content)
+	
+	
+	
+	
+					
+	var optLabels = {"switch": {"label":"Switch colors", 
+								"desc":"Switches planet color without messing with the last 3 planet fights"},
+					"addFFleet": {"label":"Add Friendly Fleet",
+								"desc":"Click on a planet/star to add friendly fleet. Adding a fleet on an enemy planet automatically changes it to the attacking team."+
+								"<br><input id='recentCb' type='checkbox'/> Automatically change the Recent Planets"},
+								
+					"addEFleet": {"label":"Add Enemey Fleet",
+								"desc":"Click on a planet/star to add enemy fleet. Adding an enemy fleet on planet you control automatically changes it to your team."+
+								"<br><input id='recentCb' type='checkbox'/> Automatically change the Recent Planets"}
+					}
+					
+	initGC("imp")				
+	function initGC (faction){
+		var updatedVersion = 
+				getJSON('https://raw.githubusercontent.com/9Tpercentmon/gc_calc/main/ver_check.json',
+					function(err, data) {
+					  if (err !== null) {
+						alert('Something went wrong: ' + err);
+					  } else {
+						if(myVersionBuild < data.curVersion.build){
+							var erroVersion = document.getElementById("alertVersion")
+							erroVersion.innerHTML = "<b>You are on an outdated version!</b><br>Your version: "+myVersion+
+										"<br>Most recent version: "+data.curVersion.name+
+										"<br>Please download the most recent version at <a href='https://github.com/9Tpercentmon/gc_calc/releases'>https://github.com/9Tpercentmon/gc_calc/releases</a>"+
+										"<br><b>What is new: </b>"+data.curVersion.summary
+						}
+					  }
+				});
+		var previousBtn = document.getElementById(currentFaction+"GCBtn") //'currentFaction' actually the hold the previous one, the value will be changed later in this function
+		var currentBtn = document.getElementById(faction+"GCBtn")
+		previousBtn.className = "btn btn-light"
+		currentBtn.className = "btn btn-success"
+		
+		clearError()
+		var defautVars = { 
+						"cis": {
+								"img":cwImage, "era":"cw", "fleetName": fleetNameCW, "strokeName": strokeNameCW, "myTeam": CIS, "title": "CIS GC AI probability generator",
+							 	"planetTeam": {"mus": CIS,"fel": REP,"cor": REP,"myg": REP,"yav": REP,"geo": CIS,"kas": REP,"nab": REP,"kam": REP, "uta": CIS,"tat": REP,"pol": REP,"dag": REP},
+							 	"planetFleet": getStartPlanet('cis'), "portPlanet": {"kam": REP,"geo": CIS},
+								"orderedTeams": ["Republic","CIS"]
+							},
+							
+					   "rep": {
+								"img":cwImage, "era":"cw", "fleetName": fleetNameCW, "strokeName": strokeNameCW, "myTeam": REP, "title": "Republic GC AI probability generator",
+								"planetTeam": {"mus": CIS,"fel": CIS,"cor": REP,"myg": CIS,"yav": CIS,"geo": CIS,"kas": CIS,"nab": REP,"kam": REP, "uta": CIS,"tat": CIS,"pol": CIS,"dag": CIS},
+								"planetFleet": getStartPlanet('rep'), "portPlanet": {"kam": REP,"geo": CIS},
+								"orderedTeams": ["Republic","CIS"]
+							},
+						"imp": {
+								"img":gcwImgs, "era":"gcw", "fleetName": fleetNameGCW, "strokeName": strokeNameGCW, "myTeam": IMP, "title": "Empire GC AI probability generator",
+								"planetTeam": {"cor": IMP,"dag": ALL,"end": IMP,"fel": ALL,"hot": ALL,"kas": ALL,"mus": IMP,"myg": ALL,"nab": ALL,"pol": ALL,"tat": ALL,"uta": ALL,"yav": ALL},
+								"planetFleet": getStartPlanet('imp'), "portPlanet": {"end": ALL,"hot": IMP},
+								"orderedTeams": ["Alliance","Empire"]
+							},
+						"all": {
+								"img":gcwImgs, "era":"gcw", "fleetName": fleetNameGCW, "strokeName": strokeNameGCW, "myTeam": ALL, "title": "Alliance GC AI probability generator",
+								"planetTeam": {"cor": IMP,"dag": ALL,"end": IMP,"fel": IMP,"hot": ALL,"kas": IMP,"mus": IMP,"myg": IMP,"nab": IMP,"pol": IMP,"tat": IMP,"uta": IMP,"yav": ALL},
+								"planetFleet": getStartPlanet('all'), "portPlanet": {"end": ALL,"hot": IMP},
+								"orderedTeams": ["Alliance","Empire"]
+							},
+
+
+					}
+		//sets global vars
+		if(faction != "reset") 
+			currentFaction = faction
+		
+		currentFactionVars = defautVars[currentFaction]
+		planetTeamJS = {}
+		planetFleetJS = {}
+		recentPlanetsJS = {}
+			
+		console.log("init! faction: "+faction+" currentFaction: "+currentFaction)
+		document.getElementById("imgs").innerHTML = defautVars[currentFaction].img
+		document.getElementById("gcTitle").innerHTML = defautVars[currentFaction].title
+		countFleet = 0
+		currentEra = defautVars[currentFaction].era
+		
+		myTeam = defautVars[currentFaction].myTeam
+		botTeam = 3-myTeam
+		recentPlanetsJS = new Array()
+		colors[0] = "dot_black"
+		colors[myTeam] = "dot_blue"
+		colors[botTeam] = "dot_red" 
+		colors[3] = "dot_black_yellow"
+		colors[myTeam+3] = "dot_blue_yellow"
+		colors[botTeam+3] = "dot_red_yellow"
+		planetTeamJS = defautVars[currentFaction].planetTeam
+		planetFleetJS = defautVars[currentFaction].planetFleet
+		fleetName = defautVars[currentFaction].fleetName
+		strokeName = defautVars[currentFaction].strokeName
+		portPlanet = defautVars[currentFaction].portPlanet
+		
+		
+		
+		//optSelected("addFFleet") //set the default mode on opneing
+		changeColor("reset",0) //set all collors
+		for(planet in planetFleetJS)
+		{
+			addFleetImg(planet,planetFleetJS[planet])
+		}
+		populateSelectFleetBuilt()
+		
+		printLua() //makes sure the lua code for copyig is there from the start
+		populateSelect() //adds all maps of planetTeam in the recent planets select list (html)
+		
+		
+		document.getElementById("recent1").value = ""
+		document.getElementById("recent2").value = ""
+		document.getElementById("recent3").value = ""
+		
+		
+		
+	}
+	
+	
+	
+
+	
+	
+	
+	
+</script>
+	
