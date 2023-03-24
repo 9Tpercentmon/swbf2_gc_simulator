@@ -1,0 +1,10 @@
+{
+  "curVersion": {
+    "name": "1.6",
+    "build": 1.6,
+    "created": "2023-03-24T16:40:09Z",
+    "releaseLink": "https://github.com/9Tpercentmon/gc_calc/releases",
+    "summary": "Bug fixes involving the highlight of the probable AI destination and general text & design edit"
+    
+  }
+}
