@@ -1,13 +1,13 @@
 {
-  "curVersion": {
-    "name": "1.6.1",
-    "build": 1.61,
-	"previousVer":"1.6",
-    "created": "2023-03-24T16:40:09Z",
-    "releaseLink": "https://github.com/9Tpercentmon/gc_calc/releases",
-    "summary": "Bugs related to most probable destination highlithing, better support for version checks, minor spelling fixes and code clean up (a bit)",
-	"mustUpdate": 1.6,
-	"justAlertMsg": "Better support for version checks, minor spelling fixes and code clean up (a bit)",
-	"readMe": "https://raw.githubusercontent.com/9Tpercentmon/swbf2_gc_simulator/main/README.txt"
+    "curVersion": {
+    	"name": "1.6.1",
+    	"build": 1.61,
+    	"previousVer":"1.6",
+    	"created": "2023-03-25T20:50:00Z",
+    	"releaseLink": "https://github.com/9Tpercentmon/gc_calc/releases",
+    	"summary": "Fixed planet under the map showing the wrong name when mouseovering it, bugs related to most probable destination highlithing, better support for version checks, minor spelling fixes and code clean up (a bit)",
+    	"mustUpdate": 1.6,
+    	"justAlertMsg": "Better support for version checks, minor spelling fixes and code clean up (a bit)",
+    	"readMe": "https://raw.githubusercontent.com/9Tpercentmon/swbf2_gc_simulator/main/README.txt"
   }
 }
