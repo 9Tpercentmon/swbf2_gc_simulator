@@ -26,6 +26,11 @@ To use the sim, simple open the file main.html and follow the instructions there
 ##    CHANGELOG    ##
 #####################
 
+v1.6.1 	- Made a better support for version check
+		- Fixed a few spelling errors
+		- Fixed fleets above the map showing the wrong planet name when mouseovering it
+	 
+
 v1.6 - Fixed highlight planet being target not being fully cleared on ties
      - Fixed highlight planet changing enemies planet color to blue when being target (visual bug only)
      - Changed the layout of the select-option and input-radio

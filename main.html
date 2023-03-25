@@ -1,7 +1,7 @@
 <html>
 <head>
-	<meta name="version" content="1.6"/>
-	<meta name="versionBuild" content="1.6"/> <!--Version without sub dots(.) 1.2.1 would be 1.21 -->
+	<meta name="version" content="1.7"/>
+	<meta name="versionBuild" content="1.7"/> <!--Version without sub dots(.) 1.2.1 would be 1.21 -->
 	<title>Sim GC by 9Tpercentmon</title>
 
 <link rel="stylesheet" type="text/css" href="css/gc.css">
@@ -149,11 +149,30 @@ Make sure the last 3 fights are set correctly.
 					  } else {
 						if(myVersionBuild < data.curVersion.build){
 							var erroVersion = document.getElementById("alertVersion")
-							erroVersion.innerHTML = "<b>You are on an outdated version!</b><br>Your version: "+myVersion+
-										"<br>Most recent version: "+data.curVersion.name+
-										"<br>Please download the most recent version at <a href='https://github.com/9Tpercentmon/gc_calc/releases'>https://github.com/9Tpercentmon/gc_calc/releases</a>"+
-										"<br><b>What is new: </b>"+data.curVersion.summary
+							var errMsgTxt = ""
+							
+							if(myVersionBuild > data.curVersion.mustUpdate){
+								erroVersion.innerHTML = 
+										`<b>You are on an oudated version...</b>
+										<br>...but don't worry, it was a simple change that doesn't require you to update anything.
+										<br>Your version: ${myVersion} // Most recent version: ${data.curVersion.name}
+										<br><b>What is new:</b> ${data.curVersion.justAlertMsg}
+										<br>But in case you want to download it anyway, please visit <a href='${data.curVersion.releaseLink}'>${data.curVersion.releaseLink}</a> and get the latest version there</a>
+										`
+								erroVersion.style = "color: yellow"
+								erroVersion.className = "text-alert"
+							}
+							else{
+								erroVersion.innerHTML = 
+										`<b>You are on an outdated version!</b><br>Your version: ${myVersion}
+										<br>Most recent version:${data.curVersion.name}
+										<br>Please download the most recent version at <a href='${data.curVersion.releaseLink}'>${data.curVersion.releaseLink}</a>
+										<br><b>What is new since v.${data.curVersion.previousVer}: </b>${data.curVersion.summary}. See all these and previous changes <a href='${data.curVersion.readMe}'>here</a>.
+										`
+							}
+							
 						}
+						
 					  }
 				});
 		var previousBtn = document.getElementById(currentFaction+"GCBtn") //'currentFaction' actually the hold the previous one, the value will be changed later in this function
@@ -200,7 +219,7 @@ Make sure the last 3 fights are set correctly.
 		planetFleetJS = {}
 		recentPlanetsJS = {}
 			
-		console.log("init! faction: "+faction+" currentFaction: "+currentFaction)
+		console.log(`init! faction: ${faction} currentFaction: ${currentFaction}`)
 		document.getElementById("imgs").innerHTML = defautVars[currentFaction].img
 		document.getElementById("gcTitle").innerHTML = defautVars[currentFaction].title
 		countFleet = 0

@@ -175,15 +175,19 @@
 			else
 				colorSuffix = "R"
 		
-		var strokeHtml = "<img id = '"+strokeName[team]+""+countFleet+"'"
-				+" name='"+planet+"' class='"+strokeName[team]+colorSuffix+" blink'"
-				+" onClick='removeFleet(this.name)'"
-				+" style='position:absolute;top: "+fleetStyleTop+"px; left: "+fleetStyleLeft+"px;'>"
+		var strokeHtml = `
+				<img id = '${strokeName[team]}${countFleet}' 
+				name='${planet}' class='${strokeName[team]}${colorSuffix} blink' 
+				onClick='removeFleet(this.name)' 
+				style='position:absolute;top: ${fleetStyleTop}px; left: ${fleetStyleLeft}px;'> 
+				`
 			
-		var fleetHtml = "<img id = '"+fleetName[team]+countFleet+"'"
-				+" name='"+planet+"' class='"+fleetName[team]+" blink'"
-				+" onClick='removeFleet(this.name)'"
-				+" style='position:absolute;top: "+fleetStyleTop+"px; left: "+fleetStyleLeft+"px;'>"
+		var fleetHtml = `
+				<img id = '${fleetName[team]}${countFleet}' 
+				name='${planet}' class='${fleetName[team]} blink' 
+				onClick='removeFleet(this.name)' 
+				style='position:absolute;top: ${fleetStyleTop}px; left: ${fleetStyleLeft}px;'>
+				`
 		
 		document.getElementById("imgs").insertAdjacentHTML("beforeend",strokeHtml)	
 		document.getElementById("imgs").insertAdjacentHTML("beforeend",fleetHtml)
@@ -199,7 +203,7 @@
 			console.log("Ctrl held!")
 			team = 3 - team //change team
 		}
-		console.log("addFleet running with planet = "+planet+" // team = " + team)
+		console.log(`addFleet running with planet = ${planet} // team = ${team}`)
 		
 		if (planetFleetJS[planet] != null){ //There is a fleet already there
 			if(planetFleetJS[planet] == team){ //if same team, remove it
@@ -209,7 +213,7 @@
 				document.getElementById("error").innerHTML = "Can't add a fleet where there is already one! If it's an enemy fleet, please remove it first.";
 		}
 		else{ //if there are no fleets, build one
-			console.log("Building fleet at "+planet)
+			console.log(`Building fleet at ${planet}`)
 			planetFleetJS[planet] = team
 			
 			addFleetImg(planet,team)
@@ -251,6 +255,8 @@
 	}
 	
 	
+	//currently not being used 
+	//used to print which function was being used (addfleet, remove fleet, etc) and show it on the html
 	function optSelected(optionButton){
 		clearError()
 		var curOpt = document.getElementById("curOpt");
@@ -263,55 +269,74 @@
 		
 	}
 	
+	//prints all info under the map, including the percentages
 	function printMapInfo(){
 		var mapInfo = document.getElementById("mapInfo");
-		var fleetsIngame = document.getElementById("fleetsIngame");
+		var fleetsIngame = document.getElementById("fleetsIngame"); //special place to add the fleet images under the map
 		var br = document.createElement("br");
 		//Fleet info//
 		var team1Fleets = ""
 		var team2Fleets = ""
 		var countTeam1Fleets = 0
 		var countTeam2Fleets = 0
-		var fleetInfo = []
+		var fleetInfoTeam1 = []
+		var fleetInfoTeam2 = []
 		
-		var loopCount = 0
+		var loopCountTeam1 = 0
+		var loopCountTeam2 = 0
 		for(var key in planetFleetJS){
 			if(planetFleetJS[key] == 1){
 				if(countTeam1Fleets > 0)
-					team1Fleets = team1Fleets + ", " //add comma starting on the second fleet added
+					team1Fleets = team1Fleets + ", " //every planet after the first one must have a comma on the left
 				team1Fleets = team1Fleets + key
 				countTeam1Fleets++
-				fleetInfo[loopCount] = key
-				loopCount++
+				fleetInfoTeam1[loopCountTeam1] = key
+				loopCountTeam1++
 			}
 			else if(planetFleetJS[key] == 2){
 				if(countTeam2Fleets > 0)
-					team2Fleets = team2Fleets + ", " //add comma starting on the second fleet added
+					team2Fleets = team2Fleets + ", " //every planet after the first one must have a comma on the left
 				team2Fleets = team2Fleets + key
 				countTeam2Fleets++
-				fleetInfo[loopCount] = key
-				loopCount++
+				fleetInfoTeam2[loopCountTeam2] = key
+				loopCountTeam2++
 			}
 		}
 		
+		
 		var myTeamFleets = countTeam1Fleets
 		var botFleets = countTeam2Fleets
-		if(myTeam == 2){
+		var fleetInfoMyTeam
+		var fleetInfoBotTeam
+		if(myTeam == 1){
+			myTeamFleets = countTeam1Fleets
+			botFleets = countTeam2Fleets
+			fleetInfoMyTeam = fleetInfoTeam1
+			fleetInfoBotTeam = fleetInfoTeam2
+		}
+		
+		else{
+			var fleetTeamTemp = fleetInfoTeam1
+			fleetInfoTeam1 = fleetInfoTeam2
+			fleetInfoTeam2 = fleetTeamTemp
+			
 			myTeamFleets = countTeam2Fleets
 			botFleets = countTeam1Fleets	
 		}
 		
 		//add mini image of amount of fleets
-		//var strokeHtmlMyTeam = ""
 		var fleetHtmlMyTeam = ""
-		//var strokeHtmlBotTeam = ""
 		var fleetHtmlBotTeam = ""
+		//var strokeHtmlBotTeam = ""
+		//var strokeHtmlMyTeam = ""
+		
 		
 		for (var i = 0; i<myTeamFleets ; i++){
-			fleetHtmlMyTeam = fleetHtmlMyTeam + "<img title='"+fleetInfo[i]+"' name='"+myTeamFleets+"' class='"+fleetName[myTeam]+" smallFleet'>"				
+			fleetHtmlMyTeam = `${fleetHtmlMyTeam} <img title='${fleetInfoTeam1[i]}' name='info_${fleetName[myTeam]}_${i}' class='${fleetName[myTeam]} smallFleet'>`				
 		}
 		for (var j = 0; j<botFleets ; j++){
-			fleetHtmlBotTeam = fleetHtmlBotTeam + "<img title='"+fleetInfo[i]+"' name='"+botFleets+"' class='"+fleetName[botTeam]+" smallFleet'>"				
+			fleetHtmlBotTeam = `${fleetHtmlBotTeam} <img title='${fleetInfoTeam2[j]}' name='info_${fleetName[botTeam]}_${j}' class='${fleetName[botTeam]} smallFleet'>`
+						
 		}
 
 		fleetsIngame.innerHTML = fleetHtmlMyTeam+fleetHtmlBotTeam	
@@ -332,27 +357,27 @@
 		for(var key in planetTeamJS){
 			if(planetTeamJS[key] == 1){
 				if(countTeam1Planets > 0)
-					team1Planets = team1Planets + ", " //add comma starting on the second fleet added
+					team1Planets = `${team1Planets}, ` //add comma starting on the second fleet added
 				var formatKey = key
 				console.log("look me here:",key,planetFleetJS[key])
 				if(planetFleetJS[key] != undefined)
-					formatKey = "<b>"+key+"</b>"
+					formatKey = `<b>${key}</b>`
 				team1Planets = team1Planets + formatKey
 				countTeam1Planets++
 			}
 			else if(planetTeamJS[key] == 2){
 				if(countTeam2Planets > 0)
-					team2Planets = team2Planets + ", " //add comma starting on the second fleet added
+					team2Planets = `${team2Planets}, ` //add comma starting on the second fleet added
 				var formatKey = key
 				if(planetFleetJS[key] != undefined)
-					formatKey = "<b>"+key+"</b>"
+					formatKey = `<b>${key}</b>`
 				team2Planets = team2Planets + formatKey
 				countTeam2Planets++
 			}
 		}
 				
-		team1Planets = "<b>"+currentFactionVars.orderedTeams[0]+" planets</b>("+countTeam1Planets+"): " + team1Planets
-		team2Planets = "<b>"+currentFactionVars.orderedTeams[1]+" planets</b>("+countTeam2Planets+"): " + team2Planets
+		team1Planets = `<b>${currentFactionVars.orderedTeams[0]} planets</b>(${countTeam1Planets}): ${team1Planets}`
+		team2Planets = `<b>${currentFactionVars.orderedTeams[1]} planets</b>(${countTeam2Planets}): ${team2Planets}`
 		
 		
 		
@@ -381,15 +406,15 @@
 		var percentSimHtml = ""
 		var percentMathHtml = ""
 		var max = {'destination': [], 'chance':0}
-		var loopCount = 0
+		//var loopCount = 0
 		var fromToListSource = {}
 		if(methodPercent == 'sim' || methodPercent == 'both'){
 			fromToListSource = propReturn.simulation
-			percentSimHtml="<br><b>Based on "+propReturn.totalSim.toLocaleString('pt')+" simulations (may vary on every update):</b>"
+			percentSimHtml=`<br><b>Based on ${propReturn.totalSim.toLocaleString('pt')} simulations (may vary on every update):</b>`
 			for (var move in propReturn.simulation) {
 				var movement=move.split("___");
 				var prob = propReturn.simulation[move]
-				percentSimHtml = percentSimHtml+"<br>"+movement[0]+"-->"+movement[1]+":&emsp;"+prob.toFixed(3)+"%"
+				percentSimHtml = `${percentSimHtml}<br>${movement[0]}-->${movement[1]}:&emsp;${prob.toFixed(3)}%`
 				
 				if(methodPercent == 'sim'){ //case 'both' is selected, uses the math method
 					if(prob > max.chance){
@@ -410,14 +435,19 @@
 		}
 		if(methodPercent == 'math' || methodPercent == 'both'){
 			fromToListSource = propReturn.math
-			if(methodPercent == 'both') //add extra line
+			if(methodPercent == 'both') //add an extra line if already added the 'math' method
 				percentMathHtml="<br>"
-			percentMathHtml=percentMathHtml+"<br><b>Based on custom formula (more reliable)</b>"
+			//if percentMathHtml is empty just before the next line, it will have an empty string before doing printing this text. if it isn't, then it will add the <br> set above
+			percentMathHtml=`
+							${percentMathHtml}
+							<br><b>Based on custom formula (more reliable)</b>`
 			var i = 0 //to count how many interation had
 			for (var move in propReturn.math) {
 				var movement=move.split("___");
 				var prob = propReturn.math[move]
-				percentMathHtml = percentMathHtml+"<br>"+movement[0]+"-->"+movement[1]+":&emsp;"+prob.toFixed(3)+"%"
+				percentMathHtml = `
+							${percentMathHtml}
+							<br>${movement[0]}-->${movement[1]}:&emsp;${prob.toFixed(3)}%`
 				var propRounded = Math.round(prob * 1000)/1000
 				if(propRounded > max.chance){
 					max.destination = [] //makes sure to empty it in case of ties
@@ -439,7 +469,10 @@
 		}
 		
 		//var html = team1Fleets	+ "<br>" + team1Planets + "<br><br>" + team2Fleets + "<br>" + team2Planets + "<br><br><b>AI Movements</b>" + percentSimHtml + percentMathHtml
-		var html = myTeamPlanets + "<br>" + botPlanets + "<br>" + percentSimHtml + percentMathHtml
+		var html = `
+					$(myTeamPlanets)
+					<br>${botPlanets}
+					<br>${percentSimHtml} ${percentMathHtml}`
 		mapInfo.innerHTML = html
 		
 		//changes title of planets/stars to the weight when mouse hovering
@@ -460,9 +493,9 @@
 			//var actualImgTag = imgFleets == undefined ? imgFleets : imgPlanet //if there is a fleet, use it as its always in front of the image
 			
 			var titleImgPlanet = planet
-			var titleImgFleet = "Fleet over " + planet
+			var titleImgFleet = `Fleet over ${planet}`
 			
-			var subtitleImg = "\nPlanet Weight: "+propReturn.planetsWeight[planet].toFixed(2)
+			var subtitleImg = `\nPlanet Weight: ${propReturn.planetsWeight[planet]}.toFixed(2)`
 			var extraTitleTo = ""
 			var extraTitleFrom = ""
 			
