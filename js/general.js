@@ -169,27 +169,19 @@
 			
 		var fleetStyleTop = parseInt(planetStyleTop)
 		var fleetStyleLeft = parseInt(planetStyleLeft)
-		var colorSuffix
+		var fleetTeamClass
 			if(team == myTeam)
-				colorSuffix = "B"
+				fleetTeamClass = "friendlyFleet"
 			else
-				colorSuffix = "R"
-		
-		var strokeHtml = `
-				<img id = '${strokeName[team]}${countFleet}' 
-				name='${planet}' class='${strokeName[team]}${colorSuffix} blink' 
-				onClick='removeFleet(this.name)' 
-				style='position:absolute;top: ${fleetStyleTop}px; left: ${fleetStyleLeft}px;'> 
-				`
+				fleetTeamClass = "enemyFleet"
 			
 		var fleetHtml = `
 				<img id = '${fleetName[team]}${countFleet}' 
-				name='${planet}' class='${fleetName[team]} blink' 
+				name='${planet}' class='${fleetName[team]} ${fleetTeamClass} blink' 
 				onClick='removeFleet(this.name)' 
 				style='position:absolute;top: ${fleetStyleTop}px; left: ${fleetStyleLeft}px;'>
 				`
 		
-		document.getElementById("imgs").insertAdjacentHTML("beforeend",strokeHtml)	
 		document.getElementById("imgs").insertAdjacentHTML("beforeend",fleetHtml)
 			
 		countFleet++
@@ -248,7 +240,6 @@
 	function removeFleet(planet){
 		clearError()
 		delete planetFleetJS[planet]
-		document.getElementsByName(planet)[1].remove();
 		document.getElementsByName(planet)[0].remove();
 		printLua()
 		populateSelectFleetBuilt()
@@ -327,15 +318,13 @@
 		//add mini image of amount of fleets
 		var fleetHtmlMyTeam = ""
 		var fleetHtmlBotTeam = ""
-		//var strokeHtmlBotTeam = ""
-		//var strokeHtmlMyTeam = ""
 		
 		
 		for (var i = 0; i<myTeamFleets ; i++){
-			fleetHtmlMyTeam = `${fleetHtmlMyTeam} <img title='${fleetInfoTeam1[i]}' name='info_${fleetName[myTeam]}_${i}' class='${fleetName[myTeam]} smallFleet'>`				
+			fleetHtmlMyTeam = `${fleetHtmlMyTeam} <img title='${fleetInfoTeam1[i]}' name='info_${fleetName[myTeam]}_${i}' class='${fleetName[myTeam]} friendlyFleet smallFleet'>`				
 		}
 		for (var j = 0; j<botFleets ; j++){
-			fleetHtmlBotTeam = `${fleetHtmlBotTeam} <img title='${fleetInfoTeam2[j]}' name='info_${fleetName[botTeam]}_${j}' class='${fleetName[botTeam]} smallFleet'>`
+			fleetHtmlBotTeam = `${fleetHtmlBotTeam} <img title='${fleetInfoTeam2[j]}' name='info_${fleetName[botTeam]}_${j}' class='${fleetName[botTeam]} enemyFleet smallFleet'>`
 						
 		}
 
@@ -470,7 +459,7 @@
 		
 		//var html = team1Fleets	+ "<br>" + team1Planets + "<br><br>" + team2Fleets + "<br>" + team2Planets + "<br><br><b>AI Movements</b>" + percentSimHtml + percentMathHtml
 		var html = `
-					$(myTeamPlanets)
+					${myTeamPlanets}
 					<br>${botPlanets}
 					<br>${percentSimHtml} ${percentMathHtml}`
 		mapInfo.innerHTML = html
@@ -489,13 +478,13 @@
 		
 		for(var planet in propReturn.planetsWeight){
 			var imgPlanet = document.getElementById(planet)
-			var imgFleets = document.getElementsByName(planet)[1] //index 0 is the stroke
+			var imgFleets = document.getElementsByName(planet)[0] //index 0 is the stroke
 			//var actualImgTag = imgFleets == undefined ? imgFleets : imgPlanet //if there is a fleet, use it as its always in front of the image
 			
 			var titleImgPlanet = planet
 			var titleImgFleet = `Fleet over ${planet}`
 			
-			var subtitleImg = `\nPlanet Weight: ${propReturn.planetsWeight[planet]}.toFixed(2)`
+			var subtitleImg = `\nPlanet Weight: ${propReturn.planetsWeight[planet].toFixed(2)}`
 			var extraTitleTo = ""
 			var extraTitleFrom = ""
 			

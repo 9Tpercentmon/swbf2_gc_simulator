@@ -1,4 +1,9 @@
-﻿.parent {
+﻿/*
+-------------
+General map configs
+-------------
+*/
+.parent {
   position: relative;
   top: 0;
   left: 0;
@@ -10,7 +15,11 @@
 }
 
 
-
+/*
+-------------
+Dot configs
+-------------
+*/
 .dot_black {
   content:url("../imgs/dot.png")
 }
@@ -31,7 +40,12 @@
   content:url("../imgs/dot_blue_yellow.png")
 }
 
-
+/*
+-------------
+Fleet configs
+-------------
+*/
+/*map fleet img*/
 .repFleet {
   content:url("../imgs/rep_fleet_normal_icon.png");
   width: 35; 
@@ -55,87 +69,31 @@
   content:url("../imgs/all_fleet_normal_icon.png");
 }
 
-
-.repStrokeY{
-  content:url("../imgs/rep_fleet_normal_stroke_yellow.png");
-  width: 37; 
-  height: 37;
-}
-.repStrokeB{
-  content:url("../imgs/rep_fleet_normal_stroke_blue.png");
-  width: 37; 
-  height: 37;
-}
-.repStrokeR{
-  content:url("../imgs/rep_fleet_normal_stroke_red.png");
-  width: 37; 
-  height: 37;
+/*map stroke*/
+.friendlyFleet{
+      -webkit-filter: drop-shadow(0px 0px 1px blue) drop-shadow(0px 0px 1px blue) drop-shadow(0px 0px 1px blue) drop-shadow(0px 0px 1px blue);
 }
 
-
-.cisStrokeY{
-  width: 37; 
-  height: 37;
-  content:url("../imgs/cis_fleet_normal_stroke_yellow.png");
-}
-.cisStrokeR{
-  width: 37; 
-  height: 37;
-  content:url("../imgs/cis_fleet_normal_stroke_red.png");
-}
-.cisStrokeB{
-  width: 37; 
-  height: 37;
-  content:url("../imgs/cis_fleet_normal_stroke_blue.png");
+.enemyFleet{
+      -webkit-filter: drop-shadow(0px 0px 1px red) drop-shadow(0px 0px 1px red) drop-shadow(0px 0px 1px red) drop-shadow(0px 0px 1px red);
 }
 
-
-.impStrokeY{
-  content:url("../imgs/imp_fleet_normal_stroke_yellow.png");
-  width: 37; 
-  height: 37;
-}
-.impStrokeR{
-  content:url("../imgs/imp_fleet_normal_stroke_red.png");
-  width: 37; 
-  height: 37;
-}
-.impStrokeB{
-  content:url("../imgs/imp_fleet_normal_stroke_blue.png");
-  width: 37; 
-  height: 37;
+.selectedFleet{
+      -webkit-filter: drop-shadow(0px 0px 1px yellow) drop-shadow(0px 0px 1px yellow) drop-shadow(0px 0px 1px yellow) drop-shadow(0px 0px 1px yellow);
 }
 
-
-.allStrokeY{
-  width: 37; 
-  height: 37;
-  content:url("../imgs/all_fleet_normal_stroke_yellow.png");
-}
-.allStrokeR{
-  width: 37; 
-  height: 37;
-  content:url("../imgs/all_fleet_normal_stroke_red.png");
-}
-.allStrokeB{
-  width: 37; 
-  height: 37;
-  content:url("../imgs/all_fleet_normal_stroke_blue.png");
-}
-
-
+/*Fleet game info (out of the map)*/
 .smallFleet{
 	width: 32; 
 	height: 32;
 }
 
-.smallStroke{
-	width: 32; 
-	height: 32;
-}
 
-
-
+/*
+-------------
+Lua code appearence
+-------------
+*/
 pre {
 white-space: pre-wrap;
 white-space: -moz-pre-wrap;
@@ -156,7 +114,21 @@ margin: 1em 0;}
 background-color: #000000;
 color: green;}
 
+/*
+-------------
+Misc configs
+-------------
+*/
 
+/*body background and content general configs*/
+body {
+  background-color: #004882;
+  margin:20;
+  padding:0;
+  font-size:18
+}
+
+/*Blink image*/
 /*https://stackoverflow.com/questions/27038732/css-fade-in-out-blinking*/
 .blink {
     -webkit-animation: blink 1.2s infinite both;
@@ -186,14 +158,8 @@ color: green;}
   }
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #004882;
-}
 
-
-
+/*custom select*/
 select {
   background-color: #0f0f0f;
   color: white;
@@ -209,7 +175,7 @@ select {
 }
 
 
-/* radio */
+/* custom radio */
 /*https://www.sliderrevolution.com/resources/styling-radio-buttons/*/
 .groupRadio {
   display: flex;
@@ -251,7 +217,7 @@ input[type=radio] + label::before {
   border-radius: 1em;
 }
 
-/* Checked */
+/* Checked (radio)*/
 input[type=checkbox]:checked + label,
 input[type=radio]:checked + label {
   padding-left: 1em;
@@ -265,7 +231,7 @@ input[type=radio]:checked + label:before {
   background: #0f0f0f;
 }
 
-/* Transition */
+/* Transition (radio) */
 label,
 label::before {
   transition: 0.35s all ease;
