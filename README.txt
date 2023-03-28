@@ -26,6 +26,10 @@ To use the sim, simple open the file main.html and follow the instructions there
 ##    CHANGELOG    ##
 #####################
 
+v1.6.2 	- Fixed unformatted weight being displayed on the map 
+	- Fixed List of planets controlled by the player not showing
+	- Improved the stroke system on the fleets
+
 v1.6.1 	- Made a better support for version check
 		- Fixed a few spelling errors
 		- Fixed fleets above the map showing the wrong planet name when mouseovering it
